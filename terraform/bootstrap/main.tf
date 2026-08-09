@@ -98,3 +98,36 @@ resource "azurerm_role_assignment" "github_acr_push" {
   role_definition_name = "AcrPush"
   principal_id         = azuread_service_principal.github_actions.object_id
 }
+
+resource "azuread_application" "github_actions_additional" {
+  for_each = var.additional_github_environments
+
+  display_name = "github-actions-${each.key}"
+}
+
+resource "azuread_service_principal" "github_actions_additional" {
+  for_each = var.additional_github_environments
+
+  client_id = azuread_application.github_actions_additional[each.key].client_id
+}
+
+resource "azuread_application_federated_identity_credential" "github_actions_additional" {
+  for_each = var.additional_github_environments
+
+  application_id = azuread_application.github_actions_additional[each.key].id
+  display_name   = "github-actions-${each.key}"
+  description    = "Allow Github Actions from the ${each.key} environment to authenticate into azure"
+  audiences = [
+    "api://AzureADTokenExchange"
+  ]
+  issuer  = "https://token.actions.githubusercontent.com"
+  subject = "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repository}@${var.github_repository_id}:environment:${each.key}"
+}
+
+resource "azurerm_role_assignment" "github_acr_push_additional" {
+  for_each             = var.additional_github_environments
+  scope                = azurerm_container_registry.shared.id
+  role_definition_name = "AcrPush"
+  principal_type       = "ServicePrincipal"
+  principal_id         = azuread_service_principal.github_actions_additional[each.key].object_id
+}
