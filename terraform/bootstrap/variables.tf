@@ -26,8 +26,23 @@ variable "github_app_name" {
   default     = "github-actions-aks"
 }
 
+variable "github_owner" {
+  description = "GitHub repository owner"
+  type        = string
+}
+
+variable "github_owner_id" {
+  description = "Immutable GitHub repository owner ID"
+  type        = string
+}
+
 variable "github_repository" {
   description = "Github repository in OWNER/REPOSITORY format"
+  type        = string
+}
+
+variable "github_repository_id" {
+  description = "Immutable GitHub repository ID"
   type        = string
 }
 

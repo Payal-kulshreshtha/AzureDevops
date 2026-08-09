@@ -33,9 +33,13 @@ jobs:
                 run: |
                     az acr login --name "${{ vars.ACR_NAME }}"
 
-            -   name: Verify ACR access
+            -   name: Build test image
                 run: |
-                    az acr show \
-                    --name "${{ vars.ACR_NAME }}"
-                    --query "{name:name, loginServer:loginServer, sku:sku}" \
-                    --output table
+                    docker pull hello-world:latest
+                    docker tag hello-world:latest \
+                    "${{ vars.ACR_LOGIN_SERVER }}/oidc-test:${{ github.sha }}"
+
+            -   name: Push test image
+                run: |
+                    docker push \
+                    "${{ vars.ACR_LOGIN_SERVER }}/oidc-test:${{ github.sha }}"

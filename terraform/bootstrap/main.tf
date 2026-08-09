@@ -83,10 +83,10 @@ resource "azuread_application_federated_identity_credential" "github_actions" {
   display_name   = "github-actions-dev"
   description    = "Allow Github Actions from the ${var.github_environment} environment to authenticate into azure"
   audiences = [
-    "api/AzureADTokenExchange"
+    "api://AzureADTokenExchange"
   ]
   issuer  = "https://token.actions.githubusercontent.com"
-  subject = "repo:${var.github_repository}:environment:${var.github_environment}"
+  subject = "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repository}@${var.github_repository_id}:environment:${var.github_environment}"
 }
 
 # ---------------------------------------------------------
