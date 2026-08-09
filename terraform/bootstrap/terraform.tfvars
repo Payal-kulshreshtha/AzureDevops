@@ -1,0 +1,7 @@
+location                   = "East US"
+shared_resource_group_name = "rg-shared"
+storage_account_name       = "tfstatepayalaks01"
+acr_name                   = "acrpayalaks01"
+github_app_name            = "github-actions-aks"
+github_repository          = "Payal-kulshreshtha/AzureDevops"
+github_environment         = "dev"
