@@ -18,6 +18,11 @@ output "acr_name" {
   value       = azurerm_container_registry.shared.name
 }
 
+output "acr_id" {
+  description = "Shared ACR resource ID"
+  value       = azurerm_container_registry.shared.id
+}
+
 output "acr_login_server" {
   description = "Shared ACR login server"
   value       = azurerm_container_registry.shared.login_server
