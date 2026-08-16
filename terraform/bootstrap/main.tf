@@ -168,3 +168,11 @@ resource "azurerm_role_assignment" "github_terraform_rbac_admin" {
   principal_id   = azuread_service_principal.github_actions.object_id
   principal_type = "ServicePrincipal"
 }
+
+resource "azurerm_role_assignment" "github_terraform_acr_rbac_admin" {
+  scope                = azurerm_container_registry.shared.id
+  role_definition_name = "Role Based Access Control Administrator"
+
+  principal_id   = azuread_service_principal.github_actions.object_id
+  principal_type = "ServicePrincipal"
+}
