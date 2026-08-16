@@ -27,7 +27,7 @@ jobs:
 
         steps:
             -   name: Code Checkout
-                uses: actions/checkout@v3 
+                uses: actions/checkout@v4
 
             -   name: Azure Login
                 uses: azure/login@v2
@@ -37,15 +37,15 @@ jobs:
                     subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
             -   name: Terraform setup
-                uses: hashicorp/setup-terraform@v2
+                uses: hashicorp/setup-terraform@v3
 
             -   name: Terraform Format Check
-                working-directory: ${{ env.TF_WORKING_DIR }}
+                working-directory: terraform
                 run: |
                     terraform fmt -check -recursive
 
             -   name: Terraform Init
-                working-directory: terraform
+                working-directory:  ${{ env.TF_WORKING_DIR }}
                 run: |
                     terraform init
 
