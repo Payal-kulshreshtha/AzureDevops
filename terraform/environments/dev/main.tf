@@ -34,20 +34,22 @@ module "network" {
 module "aks" {
   source = "../../modules/aks"
 
-  cluster_name = var.cluster_name
+  cluster_name        = var.cluster_name
   resource_group_name = module.resource_group.resource_group_name
-  location = module.resource_group.location
+  location            = module.resource_group.location
 
   dns_prefix = var.dns_prefix
-  subnet_id = module.network.aks_subnet_id
+  subnet_id  = module.network.aks_subnet_id
 
   tenant_id = var.tenant_id
 
   kubernetes_version = var.kubernetes_version
-  node_count = var.node_count
-  vm_size = var.vm_size
+  node_count         = var.node_count
+  vm_size            = var.vm_size
 
   acr_id = var.acr_id
+
+  github_service_principal_object_id = var.github_service_principal_object_id
 
   tags = var.tags
 }

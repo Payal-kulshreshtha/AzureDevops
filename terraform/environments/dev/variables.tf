@@ -77,3 +77,8 @@ variable "acr_id" {
   description = "ID of the shared Azure Container Registry"
   type        = string
 }
+
+variable "github_service_principal_object_id" {
+  description = "DEV Github actions service principal object ID"
+  type        = string
+}

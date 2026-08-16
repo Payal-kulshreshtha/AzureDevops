@@ -28,3 +28,5 @@ node_count = 1
 vm_size = "Standard_D2s_v7"
 
 acr_id = "/subscriptions/388a5285-111a-4a08-9275-44c0082c6b62/resourceGroups/rg-shared/providers/Microsoft.ContainerRegistry/registries/acrpayalaks01"
+
+github_service_principal_object_id = "3194aaea-536b-463b-8cf1-c632e017d39e"

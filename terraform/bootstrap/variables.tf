@@ -62,3 +62,7 @@ variable "additional_github_environments" {
     "prod"
   ]
 }
+
+variable "subscription_id" {
+  type = string
+}
