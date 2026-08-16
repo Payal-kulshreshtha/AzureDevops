@@ -97,4 +97,82 @@ resource "azurerm_role_assignment" "github_acr_push" {
   scope                = azurerm_container_registry.shared.id
   role_definition_name = "AcrPush"
   principal_id         = azuread_service_principal.github_actions.object_id
+  principal_type       = "ServicePrincipal"
+}
+
+resource "azuread_application" "github_actions_additional" {
+  for_each = var.additional_github_environments
+
+  display_name = "github-actions-${each.key}"
+}
+
+resource "azuread_service_principal" "github_actions_additional" {
+  for_each = var.additional_github_environments
+
+  client_id = azuread_application.github_actions_additional[each.key].client_id
+}
+
+resource "azuread_application_federated_identity_credential" "github_actions_additional" {
+  for_each = var.additional_github_environments
+
+  application_id = azuread_application.github_actions_additional[each.key].id
+  display_name   = "github-actions-${each.key}"
+  description    = "Allow Github Actions from the ${each.key} environment to authenticate into azure"
+  audiences = [
+    "api://AzureADTokenExchange"
+  ]
+  issuer  = "https://token.actions.githubusercontent.com"
+  subject = "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repository}@${var.github_repository_id}:environment:${each.key}"
+}
+
+resource "azurerm_role_assignment" "github_acr_push_additional" {
+  for_each             = var.additional_github_environments
+  scope                = azurerm_container_registry.shared.id
+  role_definition_name = "AcrPush"
+  principal_type       = "ServicePrincipal"
+  principal_id         = azuread_service_principal.github_actions_additional[each.key].object_id
+}
+
+# ---------------------------------------------------------
+# GitHub Actions Terraform State Access
+# ---------------------------------------------------------
+
+resource "azurerm_role_assignment" "github_terraform_state" {
+  scope                = azurerm_storage_account.terraform_state.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azuread_service_principal.github_actions.object_id
+  principal_type       = "ServicePrincipal"
+}
+
+resource "azurerm_role_assignment" "github_terraform_state_additional" {
+  for_each = var.additional_github_environments
+
+  scope                = azurerm_storage_account.terraform_state.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azuread_service_principal.github_actions_additional[each.key].object_id
+  principal_type       = "ServicePrincipal"
+}
+
+resource "azurerm_role_assignment" "github_terraform_contributor" {
+  scope                = "/subscriptions/${var.subscription_id}/resourceGroups/rg-aks-dev"
+  role_definition_name = "Contributor"
+  principal_id         = azuread_service_principal.github_actions.object_id
+  principal_type       = "ServicePrincipal"
+}
+
+
+resource "azurerm_role_assignment" "github_terraform_rbac_admin" {
+  scope                = "/subscriptions/${var.subscription_id}/resourceGroups/rg-aks-dev"
+  role_definition_name = "Role Based Access Control Administrator"
+
+  principal_id   = azuread_service_principal.github_actions.object_id
+  principal_type = "ServicePrincipal"
+}
+
+resource "azurerm_role_assignment" "github_terraform_acr_rbac_admin" {
+  scope                = azurerm_container_registry.shared.id
+  role_definition_name = "Role Based Access Control Administrator"
+
+  principal_id   = azuread_service_principal.github_actions.object_id
+  principal_type = "ServicePrincipal"
 }

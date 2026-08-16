@@ -49,5 +49,20 @@ variable "github_repository_id" {
 variable "github_environment" {
   description = "Github Environment allowed to authenticate"
   type        = string
-  default     = "main"
+  default     = "dev"
+}
+
+variable "additional_github_environments" {
+  description = "Github environment that allow to authenticate to Azure"
+  type        = set(string)
+
+  default = [
+    "qa",
+    "preprod",
+    "prod"
+  ]
+}
+
+variable "subscription_id" {
+  type = string
 }
